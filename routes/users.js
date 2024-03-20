@@ -95,7 +95,7 @@ module.exports = (app, next) => {
   app.get("/users/:uid", requireAuth, (req, resp) => {});
 
   // TODO: Implement the route to add new users
-  app.post("/users", requireAdmin);
+  app.post("/users", requireAdmin,postUser);
 
   app.put("/users/:uid", requireAuth, (req, resp, next) => {});
 
