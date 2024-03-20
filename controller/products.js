@@ -16,4 +16,10 @@ module.exports = {
     });
     resp.json(result1);
   },
+  getProducts: async (req, resp) => {
+    const db = await connect();
+    const collection = db.collection("products");
+    const result = await collection.find({}).toArray();
+    resp.json(result);
+  },
 };
