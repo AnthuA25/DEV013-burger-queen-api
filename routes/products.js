@@ -12,7 +12,7 @@ module.exports = (app, nextMain) => {
 
   app.post('/products',requireAdmin,postProducts)
 
-  app.patch('/products/:productId',requireAdmin);
+  app.patch('/products/:productId',requireAdmin,patchProductById);
 
   app.delete('/products/:productId',requireAdmin);
 
