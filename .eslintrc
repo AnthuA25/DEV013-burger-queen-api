@@ -6,6 +6,7 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
+  "linebreak-style": ["error", "windows"],
   "rules": {
     "no-underscore-dangle": "off",
     "consistent-return": "off",
