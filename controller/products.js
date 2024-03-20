@@ -22,4 +22,18 @@ module.exports = {
     const result = await collection.find({}).toArray();
     resp.json(result);
   },
+  getProductById: async (req, resp) => {
+    try {
+      const { productId } = req.params;
+      const db = await connect();
+      const collection = db.collection("products");
+      const cursor = await collection
+        .find({ _id: new ObjectId(productId) })
+        .toArray();
+      console.log("🚀 ~ getProductById: ~ cursor:", cursor);
+      resp.json(cursor);
+    } catch (error) {
+      console.log("🚀 ~ getProductById:async ~ error:", error);
+    }
+  },
 };
