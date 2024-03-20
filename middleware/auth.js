@@ -45,7 +45,7 @@ module.exports.isAuthenticated = (req) => {
 module.exports.isAdmin = (req) => (
   // if the user is an admin
   // TODO: Decide based on the request information whether the user is an admin
-  false
+  req.role === 'admin' ?  true : false
 );
 module.exports.requireAuth = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
