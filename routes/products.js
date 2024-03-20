@@ -10,7 +10,7 @@ module.exports = (app, nextMain) => {
 
   app.get('/products/:productId',requireAuth, getProductById);
 
-  app.post('/products',requireAdmin)
+  app.post('/products',requireAdmin,postProducts)
 
   app.patch('/products/:productId',requireAdmin);
 
