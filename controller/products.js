@@ -57,4 +57,17 @@ module.exports = {
       resp.json({ msg: "error" });
     }
   },
+  deleteProductById: async (req, resp) => {
+    try {
+      const { productId } = req.params;
+      const db = await connect();
+      const collection = db.collection("products");
+      const result = await collection.deleteOne({
+        _id: new ObjectId(productId),
+      });
+      resp.json(result);
+    } catch (error) {
+      resp.json({ msg: "error" });
+    }
+  },
 };
