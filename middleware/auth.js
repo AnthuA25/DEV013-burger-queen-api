@@ -34,10 +34,12 @@ module.exports = (secret) => (req, resp, next) => {
 };
 
 // Funciones de autenticación y autorización
-module.exports.isAuthenticated = (req) => (
+module.exports.isAuthenticated = (req) => {
   // TODO: Decide based on the request information whether the user is authenticated
-  false
-);
+  if(req.uid) return true;
+  return false;
+
+};
   
 
 module.exports.isAdmin = (req) => (
