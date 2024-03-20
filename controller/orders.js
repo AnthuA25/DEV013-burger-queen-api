@@ -51,4 +51,14 @@ module.exports = {
       resp.status(500).json({ error: "Error interno del servidor" });
     }
   },
+  getOrders: async (req, resp) => {
+    try {
+      const db = await connect();
+      const collection = db.collection("orders");
+      const result = await collection.find({}).toArray();
+      resp.status(200).json({ok:"successful operation",orders:result})
+    } catch (error) {
+      resp.status(500).json({ error: "Error interno del servidor" });
+    }
+  },
 };
