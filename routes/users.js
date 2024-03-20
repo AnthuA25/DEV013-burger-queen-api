@@ -90,7 +90,7 @@ const initAdminUser = async (app, next) => {
  */
 
 module.exports = (app, next) => {
-  app.get("/users",requireAdmin);
+  app.get("/users",requireAdmin,getUsers);
 
   app.get("/users/:uid", requireAuth, (req, resp) => {});
 
