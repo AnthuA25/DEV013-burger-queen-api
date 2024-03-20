@@ -14,7 +14,7 @@ module.exports = (app, nextMain) => {
 
   app.patch('/products/:productId',requireAdmin,patchProductById);
 
-  app.delete('/products/:productId',requireAdmin);
+  app.delete('/products/:productId',requireAdmin,deleteProductById);
 
   nextMain();
 };
