@@ -25,8 +25,8 @@ module.exports = (secret) => (req, resp, next) => {
       return next(403);
     }
     // TODO: Verify user identity using `decodeToken.uid`
-    req.userId = decodedToken._id;
-    console.log("🚀 ~ jwt.verify ~ req.userId:", req.userId)
+    req.uid = decodedToken._id;
+    console.log("🚀 ~ jwt.verify ~ req.uid:", req.uid)
     req.role = decodedToken.role;
     console.log("🚀 ~ jwt.verify ~ req.role:", req.role)
     next()
