@@ -8,7 +8,7 @@ module.exports = (app, nextMain) => {
 
   app.get('/products', requireAuth, getProducts);
 
-  app.get('/products/:productId',requireAuth);
+  app.get('/products/:productId',requireAuth, getProductById);
 
   app.post('/products',requireAdmin)
 
