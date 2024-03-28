@@ -29,6 +29,7 @@ module.exports = (secret) => (req, resp, next) => {
     console.log("🚀 ~ jwt.verify ~ req.uid:", req.uid)
     req.role = decodedToken.role;
     console.log("🚀 ~ jwt.verify ~ req.role:", req.role)
+    req.email = decodedToken.email
     next()
   });
 };
@@ -42,11 +43,12 @@ module.exports.isAuthenticated = (req) => {
 };
   
 
-module.exports.isAdmin = (req) => (
+module.exports.isAdmin = (req) => {
   // if the user is an admin
   // TODO: Decide based on the request information whether the user is an admin
-  req.role === 'admin' ?  true : false
-);
+  console.log("🚀 ~ req.role:", req.role);
+  return req.role === 'admin' ?  true : false;
+};
 module.exports.requireAuth = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
     ? next(401)
