@@ -25,6 +25,13 @@ module.exports = {
       return resp.status(500).send("Error en el servidor");
     }
   },
+  getUserById: async (req, resp) => {
+    try {
+      
+    } catch (error) {
+      return resp.status(500).send("Error en el servidor");
+    }
+  },
   postUser: async (req, resp) => {
     try {
       const { email, password, role } = req.body;
@@ -55,4 +62,12 @@ module.exports = {
       return resp.status(500).send("Error en el servidor");
     }
   },
+};
+const validateOwnerOrAdmin = (req, uid) => {
+  if (req.role !== "admin") {
+    if (uid !== req.uid && uid !== req.email) {
+      return false;
+    }
+  }
+  return true;
 };
