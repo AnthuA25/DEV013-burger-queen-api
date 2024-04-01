@@ -71,12 +71,18 @@ module.exports = {
       if (!listRole.includes(role)) {
         return resp.status(400).json({ error: "role is not valid" });
       }
-      
+
       // Validación del formato de correo electrónico
       if (!isValidEmail(email)) {
         return resp
           .status(400)
           .json({ error: "El correo electrónico proporcionado no es válido" });
+      }
+      // Validación de la longitud mínima de la contraseña
+      if (password.length < 4) {
+        return resp
+          .status(400)
+          .json({ error: "La contraseña debe tener al menos 6 caracteres" });
       }
       const saltRound = 10;
       const salt = await bcrypt.genSalt(saltRound);
