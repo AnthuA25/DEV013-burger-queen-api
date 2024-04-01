@@ -12,8 +12,12 @@ module.exports = {
       const options = {
         projection: { _id: 1, email: 1, role: 1 },
       };
-      const result = await collection.find({}, options).skip(offset).limit(limit).toArray();
-      
+      const result = await collection
+        .find({}, options)
+        .skip(offset)
+        .limit(limit)
+        .toArray();
+
       if (result.length === 0) {
         return resp
           .status(404)
@@ -63,8 +67,17 @@ module.exports = {
           .status(400)
           .json({ msg: "Faltan ingresar un email o password válidos" });
       }
-      if (!listRole.includes(role))
-        resp.status(400).json({ error: "role is not valid" });
+      // Validación de rol válido
+      if (!listRole.includes(role)) {
+        return resp.status(400).json({ error: "role is not valid" });
+      }
+      
+      // Validación del formato de correo electrónico
+      if (!isValidEmail(email)) {
+        return resp
+          .status(400)
+          .json({ error: "El correo electrónico proporcionado no es válido" });
+      }
       const saltRound = 10;
       const salt = await bcrypt.genSalt(saltRound);
       const hashedPassword = await bcrypt.hash(password, salt);
@@ -110,7 +123,6 @@ const getIdOrEmail = (uid) => {
   }
   return filter;
 };
-
 
 function isValidEmail(email) {
   const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
