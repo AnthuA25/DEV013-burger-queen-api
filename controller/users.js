@@ -111,6 +111,87 @@ module.exports = {
       return resp.status(500).send("Error en el servidor");
     }
   },
+  putByUser: async (req, resp) => {
+    try {
+      const { uid } = req.params;
+      const { email, password, role } = req.body;
+      
+      // Conexión a la base de datos y obtención de la colección usuarios
+      const db = await connect();
+      const collection = db.collection("users");
+
+      // Verificación de permisos del usuario actual
+      if (!validateOwnerOrAdmin(req, uid)) {
+        return resp.status(403).json({
+          error: "El usuario no tiene permisos para actualizar",
+        });
+      }
+
+      // Verificar el ID de usuario proporcionado
+      const filter = getIdOrEmail(uid);
+      if (!filter) {
+        return resp
+          .status(400)
+          .json({ error: "El ID de usuario proporcionado no es válido" });
+      }
+
+
+      // Verificación de si existe un usuario en la BD
+      const existingUser = await collection.findOne(filter);
+      if (!existingUser) {
+        return resp.status(404).json({
+          msg: "El usuario con el ID proporcionado no existe en la base de datos",
+        });
+      }
+
+      // Validación de información enviada para modificar
+      if (Object.keys(req.body).length === 0) {
+        return resp
+          .status(400)
+          .json({ error: "No se envio ninguna información para modificar" });
+      }
+
+      // Hashing si la constraseña se proporciono
+      let hashedPassword;
+      if (password) {
+        const saltRound = 10;
+        const salt = await bcrypt.genSalt(saltRound);
+        hashedPassword = await bcrypt.hash(password, salt);
+      }
+      //  Verificación de cambios en el rol de usuario
+      if (role !== existingUser.role) {
+        if (role === "admin" && !isAdmin(req)) {
+          return resp.status(403).json({
+            msg: "El usuario no tiene permisos para cambiar el rol",
+          });
+        }
+      }
+      console.log("🚀 ~ putByUser: ~ existingUser.role:", existingUser.role)
+      console.log("🚀 ~ putByUser: ~ role:", role)
+      console.log("isadmin",isAdmin(req))
+      const updateDoc = await collection.updateOne(filter, {
+        $set: {
+          email: email || existingUser.email,
+          password: hashedPassword || existingUser.password,
+          role: role || existingUser.role,
+        },
+      });
+      console.log(
+        "🚀 ~ putByUser: ~ updateDoc.modifiedCount:",
+        updateDoc.modifiedCount
+      );
+
+      // Verificación de cambios realizados
+      if (updateDoc.modifiedCount === 0) {
+        return resp.status(400).json({ error: "No se realizo ningún cambio" });
+      }
+      // envio de la inforamción actualizada
+      // const viewUpdate = await collection.findOne(filter);
+      return resp.json(updateDoc);
+    } catch (error) {
+      return resp.status(500).send("Error en el servidor");
+    }
+  },
 };
 const validateOwnerOrAdmin = (req, uid) => {
   if (req.role !== "admin") {
