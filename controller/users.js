@@ -30,12 +30,23 @@ module.exports = {
       const { uid } = req.params;
       const db = await connect();
       const collection = db.collection("users");
+      const filter = getIdOrEmail(uid);
       if (!validateOwnerOrAdmin(req, uid)) {
         console.log("roles", req.role);
         return resp.status(403).json({
           error: "El usuario no tiene permisos para ver esta información",
         });
       }
+      if (!filter) {
+        return resp.status(400).json({ error: "Identificador inválido" });
+      }
+      const cursor = await collection.findOne(filter);
+      if (!cursor) {
+        return resp.status(404).json({
+          msg: "Usuario no encontrado, por favor intente de nuevo con un usuario válido.",
+        });
+      }
+      return resp.status(200).json(cursor);
     } catch (error) {
       return resp.status(500).send("Error en el servidor");
     }
