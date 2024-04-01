@@ -192,6 +192,40 @@ module.exports = {
       return resp.status(500).send("Error en el servidor");
     }
   },
+  deleteByUser: async (req, resp) => {
+    try {
+      const { uid } = req.params;
+      const db = await connect();
+      const collection = db.collection("users");
+      const filter = getIdOrEmail(uid);
+
+      // Verificar permisos del usuario actual
+      if (!validateOwnerOrAdmin(req, uid)) {
+        return resp.status(403).json({
+          error: "El usuario no tiene permisos para ver esta información",
+        });
+      }
+      // Verificar si el ID de usuario proporcionado es válido
+      if (!filter) {
+        return resp
+          .status(400)
+          .json({ error: "El ID de usuario proporcionado no es válido" });
+      }
+      // Buscar el usuario en la base de datos
+      const getUser = await collection.findOne(filter);
+      if (!getUser) {
+        return resp.status(404).json({ error: "El Id del usuario no existe" });
+      }
+      // Eliminar el usuario de la base de datos
+      const cursor = await collection.deleteOne(filter);
+
+      return resp
+        .status(200)
+        .json({ msg: "Usuario eliminado", usuario: cursor });
+    } catch (error) {
+      return resp.status(500).send("Error en el servidor");
+    }
+  },
 };
 const validateOwnerOrAdmin = (req, uid) => {
   if (req.role !== "admin") {
