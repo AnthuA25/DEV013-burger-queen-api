@@ -1,8 +1,8 @@
 const {
   requireAuth,
   requireAdmin,
-} = require('../middleware/auth');
-const {getProducts,postProducts,patchProductById,deleteProductById,getProductById} = require('../controller/products.js')
+} = require('../middleware/auth.js');
+const {getProducts,postProducts,putProductById,deleteProductById,getProductById} = require('../controller/products.js')
 
 module.exports = (app, nextMain) => {
 
@@ -12,7 +12,7 @@ module.exports = (app, nextMain) => {
 
   app.post('/products',requireAdmin,postProducts)
 
-  app.patch('/products/:productId',requireAdmin,patchProductById);
+  app.put('/products/:productId',requireAdmin,putProductById);
 
   app.delete('/products/:productId',requireAdmin,deleteProductById);
 
