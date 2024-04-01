@@ -27,7 +27,15 @@ module.exports = {
   },
   getUserById: async (req, resp) => {
     try {
-      
+      const { uid } = req.params;
+      const db = await connect();
+      const collection = db.collection("users");
+      if (!validateOwnerOrAdmin(req, uid)) {
+        console.log("roles", req.role);
+        return resp.status(403).json({
+          error: "El usuario no tiene permisos para ver esta información",
+        });
+      }
     } catch (error) {
       return resp.status(500).send("Error en el servidor");
     }
