@@ -2,13 +2,28 @@ const { connect } = require("../connect");
 const bcrypt = require("bcrypt");
 module.exports = {
   getUsers: async (req, resp, next) => {
-    const db = await connect();
-    const collection = db.collection("users");
-    const options = {
-      projection: { _id: 1, email: 1, role: 1 },
-    };
-    const result = await collection.find({}, options).toArray();
-    resp.json(result);
+    try {
+      const { _page, _limit } = req.query;
+      const db = await connect();
+      const collection = db.collection("users");
+      const limit = parseInt(_limit) || 10;
+      const page = parseInt(_page) || 1;
+      const offset = (page - 1) * limit;
+      const options = {
+        projection: { _id: 1, email: 1, role: 1 },
+      };
+      const result = await collection.find({}, options).skip(offset).limit(limit).toArray();
+      
+      if (result.length === 0) {
+        return resp
+          .status(404)
+          .json({ message: "No hay usuarios disponibles" });
+      } else {
+        return resp.status(200).json(result);
+      }
+    } catch (error) {
+      return resp.status(500).send("Error en el servidor");
+    }
   },
   postUser: async (req, resp) => {
     try {
