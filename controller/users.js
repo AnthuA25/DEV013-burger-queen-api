@@ -79,3 +79,17 @@ const validateOwnerOrAdmin = (req, uid) => {
   }
   return true;
 };
+
+const getIdOrEmail = (uid) => {
+  let filter;
+  const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const validateId = ObjectId.isValid(uid);
+  if (regexCorreo.test(uid)) {
+    filter = { email: uid };
+  } else {
+    if (validateId) {
+      filter = { _id: new ObjectId(uid) };
+    }
+  }
+  return filter;
+};
