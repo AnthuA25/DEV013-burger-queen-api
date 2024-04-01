@@ -84,10 +84,11 @@ module.exports = {
           .status(400)
           .json({ error: "La contraseña debe tener al menos 6 caracteres" });
       }
-      const saltRound = 10;
-      const salt = await bcrypt.genSalt(saltRound);
-      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Generación de hash de la contraseña
+      const hashedPassword = await bcrypt.hash(password, 10);
       console.log("🚀 ~ app.post ~ hashedPassword:", hashedPassword);
+       // Verificar si el correo ya está registrado o no
       const findEmail = await collection.findOne({ email: email });
       if (!findEmail) {
         const result = await collection.insertOne({
@@ -95,11 +96,15 @@ module.exports = {
           password: hashedPassword,
           role: role,
         });
-        resp.status(201).json(result);
+        const { insertedId } = result;
+        console.log("🚀 ~ postUser: ~ insertedId:", insertedId);
+
+        return resp
+          .status(200)
+          .json({ _id: new ObjectId(insertedId), email: email, role: role });
+      } else {
+        return resp.status(403).json({ msg: "Usuario ya registrado" });
       }
-      // } else {
-      //   resp.send("El usuario ya existe");
-      // }
     } catch (error) {
       console.log("🚀 ~ app.post ~ error:", error);
 
