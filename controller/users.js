@@ -93,3 +93,9 @@ const getIdOrEmail = (uid) => {
   }
   return filter;
 };
+
+
+function isValidEmail(email) {
+  const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regexCorreo.test(email);
+}
