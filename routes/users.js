@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 
-const { postUser, getUsers } = require("../controller/users");
+const { postUser, getUsers,getUserById, putByUser, deleteByUser} = require("../controller/users");
 const { requireAuth, requireAdmin } = require("../middleware/auth");
 const { connect } = require("../connect");
 
@@ -13,7 +13,7 @@ const initAdminUser = async (app, next) => {
   const adminUser = {
     email: adminEmail,
     password: bcrypt.hashSync(adminPassword, 10),
-    role: { admin: true },
+    role: "admin",
   };
 
   // TODO: Create admin user
@@ -21,14 +21,14 @@ const initAdminUser = async (app, next) => {
   // If it doesn't exist, it needs to be saved
   const db = await connect();
   const collection = db.collection("users");
-  const adminExist = await collection.findOne({
-    email: adminUser.email,
-  });
+  const adminExist = await collection
+    .findOne({
+      email: adminUser.email,
+    })
   console.log("🚀 ~ initAdminUser ~ adminExist:", adminExist);
 
   if (!adminExist) {
-    const createAdmin = await collection.insertOne(adminUser);
-    return createAdmin;
+    await collection.insertOne(adminUser);
   }
 
   next();
@@ -90,16 +90,16 @@ const initAdminUser = async (app, next) => {
  */
 
 module.exports = (app, next) => {
-  app.get("/users",requireAdmin,getUsers);
+  app.get("/users", requireAdmin, getUsers);
 
-  app.get("/users/:uid", requireAuth, (req, resp) => {});
+  app.get("/users/:uid", requireAuth,getUserById);
 
   // TODO: Implement the route to add new users
-  app.post("/users", requireAdmin,postUser);
+  app.post("/users", requireAdmin, postUser);
 
-  app.put("/users/:uid", requireAuth, (req, resp, next) => {});
+  app.put("/users/:uid", requireAuth,putByUser);
 
-  app.delete("/users/:uid", requireAuth, (req, resp, next) => {});
+  app.delete("/users/:uid", requireAuth,deleteByUser);
 
   initAdminUser(app, next);
 };
