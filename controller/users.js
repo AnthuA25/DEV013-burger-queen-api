@@ -55,14 +55,20 @@ module.exports = {
     try {
       const { email, password, role } = req.body;
       const db = await connect();
+      const collection = db.collection("users");
       const listRole = ["admin", "waiter", "chef"];
+      // Validaciones de campos obligatorios
+      if (!email || !password) {
+        return resp
+          .status(400)
+          .json({ msg: "Faltan ingresar un email o password válidos" });
+      }
       if (!listRole.includes(role))
         resp.status(400).json({ error: "role is not valid" });
       const saltRound = 10;
       const salt = await bcrypt.genSalt(saltRound);
       const hashedPassword = await bcrypt.hash(password, salt);
       console.log("🚀 ~ app.post ~ hashedPassword:", hashedPassword);
-      const collection = db.collection("users");
       const findEmail = await collection.findOne({ email: email });
       if (!findEmail) {
         const result = await collection.insertOne({
