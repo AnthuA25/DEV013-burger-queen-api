@@ -11,7 +11,7 @@ module.exports = (app, nextMain) => {
 
   app.put('/orders/:orderId', requireAuth, putOrderById);
 
-  app.delete('/orders/:orderId', deleteOrderById);
+  app.delete('/orders/:orderId', requireAuth,  deleteOrderById);
 
   nextMain();
 };
