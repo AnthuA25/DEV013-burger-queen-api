@@ -162,7 +162,7 @@ module.exports = {
       }
       //  Verificación de cambios en el rol de usuario
       if (role !== existingUser.role) {
-        if (role === "admin" && !isAdmin(req)) {
+        if (!isAdmin(req)) {
           return resp.status(403).json({
             msg: "El usuario no tiene permisos para cambiar el rol",
           });
