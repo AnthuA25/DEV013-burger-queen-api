@@ -40,7 +40,7 @@ module.exports = {
   postProducts: async (req, resp) => {
     try {
       const { name, price, image, type } = req.body;
-      if (!name || !price) {
+      if (!name || !price ) {
         return resp.status(400).json({ message: "empty fields" });
       }
       if (typeof price !== 'number') {
@@ -50,10 +50,12 @@ module.exports = {
       const db = await connect();
       const collection = db.collection("products");
       const dateEntry = new Date();
+// 
       // const findProduct = await collection.findOne( { name: name} );
       // if (findProduct){
       //   return resp.status(403).json({message : 'Ya existe un producto con este nombre'})
       // }
+// 
       const cursor = await collection.insertOne({
         name,
         price,
@@ -105,8 +107,9 @@ module.exports = {
           type,
         },
       });
+      
       if (cursor.modifiedCount === 0) {
-        return resp.status(404).json({
+        return resp.status(400).json({
           error: "No se modifico ningun dato del producto",
         });
       }
