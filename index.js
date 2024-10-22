@@ -16,7 +16,7 @@ app.set('pkg', pkg);
 
 // parse application/x-www-form-urlencoded
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: '*',
 }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
